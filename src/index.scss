@@ -1,0 +1,31 @@
+/* autoprefixer grid: on */
+
+@import "~materialize-css/dist/css/materialize.min.css";
+
+body {
+  margin: 0;
+  padding: 0;
+}
+
+.todo {
+  margin-bottom: 1rem;
+  & label {
+    width: 100%;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    cursor: pointer;
+    padding: 1rem;
+    span {
+      color: #000000;
+      font-size: 1.25rem !important;
+    }
+  }
+  & i {
+    z-index: 2;
+  }
+}
+
+.todo.completed span {
+  text-decoration: line-through;
+}
