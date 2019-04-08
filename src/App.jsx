@@ -33,7 +33,7 @@ export default function App() {
       }}
     >
       <div className="container">
-        <h1>Todo app</h1>
+        <h1>Список задач</h1>
 
         <div className="input-field">
           <input
@@ -42,7 +42,7 @@ export default function App() {
             onChange={e => setTodoTitle(e.target.value)}
             onKeyPress={addTodo}
           />
-          <label>Todo name</label>
+          <label>Новая задача</label>
         </div>
 
         <TodoList todos={state} />

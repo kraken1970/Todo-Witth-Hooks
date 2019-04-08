@@ -17,11 +17,11 @@ export default function TodoItem({ title, id, completed }) {
             })
           }
         />
-        <span>{title}</span>
+        <span title="Отметить">{title}</span>
 
         <i
           className="material-icons  pink-text text-darken-3"
-          title="Delete Me!"
+          title="Удалить задачу"
           onClick={() =>
             dispatch({
               type: "remove",
