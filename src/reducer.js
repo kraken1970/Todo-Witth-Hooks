@@ -1,4 +1,13 @@
-export default function(state, action) {
+// import React, { useState } from "react";
+
+const initialState = [
+  { id: 1, title: "First todo", completed: false },
+  { id: 2, title: "Second todo", completed: true }
+];
+
+export default function reducer(state = initialState, action) {
+  console.log(state);
+
   switch (action.type) {
     case "add":
       return [
