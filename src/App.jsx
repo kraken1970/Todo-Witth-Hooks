@@ -1,26 +1,27 @@
-import React, { useState, useEffect, useReducer } from "react";
-
+import React, { useState, useEffect } from "react";
+import { Context } from "./context";
 import TodoList from "./TodoList";
 import axios from "axios";
 
-const API = "/todos.json";
-
-axios.defaults.baseURL = "/todos.json";
-axios.defaults.headers.common["Authorization"] = "JWT_TOKEN_HERE";
-axios.defaults.headers.post["Content-Type"] = "application/json";
+const API = "https://newtodohooks.firebaseio.com/tasks.json";
 
 export default function App() {
   const [todos, setTodos] = useState([]);
 
   useEffect(() => {
     async function fetchData() {
-      const response = await fetch(API);
-      const json = await response.json();
-      console.log("json0", json);
-
-      setTodos(json);
+      try {
+        const response = await axios.get(API);
+        const task = [];
+        Object.values(response.data).map(item => {
+          task.push(item);
+          return task;
+        });
+        await setTodos(task);
+      } catch (error) {
+        console.log(error);
+      }
     }
-
     fetchData();
   }, []);
 
@@ -28,48 +29,63 @@ export default function App() {
 
   const addTodo = async e => {
     if (todoTitle !== "" && e.key === "Enter") {
-      setTodos([
-        ...todos,
-        {
-          id: Date.now(),
-          title: todoTitle,
-          completed: false
-        }
-      ]);
+      const task = {
+        id: Date.now(),
+        title: todoTitle,
+        completed: false
+      };
 
-      axios.post("/todos.json", todos).then(res => {
-        console.log(res);
-        console.log(res.data);
-      });
+      try {
+        await axios.post(API, task);
+      } catch (e) {
+        console.log(e);
+      }
 
       setTodoTitle("");
     }
   };
 
+  const removeTodo = id => {
+    setTodos(
+      todos.filter(todo => {
+        return todo.id !== id;
+      })
+    );
+  };
+
+  const toggleTodo = id => {
+    setTodos(
+      todos.map(todo => {
+        if (todo.id === id) {
+          todo.completed = !todo.completed;
+        }
+        return todo;
+      })
+    );
+  };
+
   return (
-    // <Context.Provider
-    //   value={{
-    //     dispatch
-    //   }}
-    // >
-    <div className="container">
-      <h1>Список задач</h1>
+    <Context.Provider
+      value={{
+        toggleTodo,
+        removeTodo
+      }}
+    >
+      <div className="container">
+        <h1>Список задач</h1>
 
-      <div className="input-field">
-        <input
-          type="text"
-          value={todoTitle}
-          onChange={e => setTodoTitle(e.target.value)}
-          onKeyPress={addTodo}
-        />
-        <label>Новая задача</label>
+        <div className="input-field">
+          <input
+            type="text"
+            value={todoTitle}
+            onChange={e => setTodoTitle(e.target.value)}
+            onKeyPress={addTodo}
+          />
+          <label>Новая задача</label>
+        </div>
+
+        <TodoList todos={todos} />
       </div>
-
-      <TodoList
-        // todos={typeof state !== "undefined" || "null" ? state : initialState}
-        todos={todos}
-      />
-    </div>
-    // </Context.Provider>
+    </Context.Provider>
   );
 }
